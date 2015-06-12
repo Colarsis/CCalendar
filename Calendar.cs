@@ -26,7 +26,7 @@ namespace colarsisUserControl
 
         //PROPERTIES//
 
-        //private Color headerTextColor = Color.CadetBlue;
+        private Color headerTextColor = Color.CadetBlue;
         private Color eventTextColor = Color.Black;
         private Color mainBackgroundColor = Color.LightGray;
         private Color headerBackgroundColor = Color.Gray;
@@ -37,7 +37,7 @@ namespace colarsisUserControl
         private Color sepColor = Color.Gray;
         private Color timeBarColor = Color.Blue;
         private int sepThickness = 1;
-        private int week;
+        private DateTime calendarStart;
 
         //PROPERTIES//
 
@@ -114,10 +114,16 @@ namespace colarsisUserControl
             set { sepThickness = value; }
         }
 
-        public int SeparatorThickness
+        public List<Event> Events
         {
-            get { return week; }
-            set { week = value; }
+            get { return events; }
+            private set { events = value; }
+        }
+
+        public DateTime CalendarStart
+        {
+            get { return calendarStart; }
+            private set { calendarStart = value; }
         }
 
         //******************** GETTER / SETTER ********************//
@@ -125,16 +131,33 @@ namespace colarsisUserControl
 
         public Calendar()
         {
-            //headerTextBrush = new SolidBrush(headerTextColor);
+            headerTextBrush = new SolidBrush(headerTextColor);
             eventTextBrush = new SolidBrush(eventTextColor);
 
-            DateTime now = DateTime.Now;
-
-            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-
-            System.Globalization.Calendar cal = dfi.Calendar;
-
-            week = cal.GetWeekOfYear(now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+            switch (DateTime.Now.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    calendarStart = DateTime.Now;
+                    break;
+                case DayOfWeek.Tuesday:
+                    calendarStart = DateTime.Now.AddDays(-1);
+                    break;
+                case DayOfWeek.Wednesday:
+                    calendarStart = DateTime.Now.AddDays(-2);
+                    break;
+                case DayOfWeek.Thursday:
+                    calendarStart = DateTime.Now.AddDays(-3);
+                    break;
+                case DayOfWeek.Friday:
+                    calendarStart = DateTime.Now.AddDays(-4);
+                    break;
+                case DayOfWeek.Saturday:
+                    calendarStart = DateTime.Now.AddDays(-5);
+                    break;
+                case DayOfWeek.Sunday:
+                    calendarStart = DateTime.Now.AddDays(-6);
+                    break;
+            }
 
             events.Add(new Event(0, "Ceci est unt test de longue chaine de charactère", "test2", DateTime.Now, DateTime.Now + new TimeSpan(5, 20, 0), Color.Red));
             events.Add(new Event(1, "Ceci est unt test de longue chaine de charactère", "test2", DateTime.Now + new TimeSpan(1, 0, 0, 0), DateTime.Now + new TimeSpan(1, 5, 20, 0), Color.Red));
@@ -149,10 +172,146 @@ namespace colarsisUserControl
             timer1.Start();
         }
 
+        public void refresh()
+        {
+            verticalLines.Clear();
+            horizontalLines.Clear();
+
+            initDays(panel1.Width - 100);
+            initHours(panel1.Height - 70);
+
+            panel1.Invalidate();
+        }
+
+        public void addWeek(int number)
+        {
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+
+            System.Globalization.Calendar cal = dfi.Calendar;
+
+            calendarStart = cal.AddWeeks(calendarStart, number);
+
+            refresh();
+        }
+
+        public void removeWeek(int number)
+        {
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+
+            System.Globalization.Calendar cal = dfi.Calendar;
+
+            calendarStart = cal.AddWeeks(calendarStart, number * -1);
+
+            refresh();
+        }
+
+        public void addEvent(Event e)
+        {
+            events.Add(e);
+        }
+
+        public void removeEvent(Event e)
+        {
+            events.Remove(e);
+        }
+
         public void initializeLayout()
         {
             initDays(panel1.Width-100);
             initHours(panel1.Height-70);
+        }
+
+        private string getDayDate(DateTime week, DayOfWeek day)
+        {
+            DateTime date = new DateTime();
+
+            switch (day)
+            {
+                case DayOfWeek.Monday:
+                    date = week.Date;
+                    break;
+                case DayOfWeek.Tuesday:
+                    date = week.Date.AddDays(1);
+                    break;
+                case DayOfWeek.Wednesday:
+                    date = week.Date.AddDays(2);
+                    break;
+                case DayOfWeek.Thursday:
+                    date = week.Date.AddDays(3);
+                    break;
+                case DayOfWeek.Friday:
+                    date = week.Date.AddDays(4);
+                    break;
+                case DayOfWeek.Saturday:
+                    date = week.Date.AddDays(5);
+                    break;
+                case DayOfWeek.Sunday:
+                    date = week.Date.AddDays(6);
+                    break;
+            }
+
+            return date.Day + "/" + date.Month + "/" + date.Year;
+        }
+
+        private bool compareWeek(DateTime dt1, DateTime dt2)
+        {
+            switch (dt1.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    break;
+                case DayOfWeek.Tuesday:
+                    dt1 = dt1.AddDays(-1);
+                    break;
+                case DayOfWeek.Wednesday:
+                    dt1 = dt1.AddDays(-2);
+                    break;
+                case DayOfWeek.Thursday:
+                    dt1 = dt1.AddDays(-3);
+                    break;
+                case DayOfWeek.Friday:
+                    dt1 = dt1.AddDays(-4);
+                    break;
+                case DayOfWeek.Saturday:
+                    dt1 = dt1.AddDays(-5);
+                    break;
+                case DayOfWeek.Sunday:
+                    dt1 = dt1.AddDays(-6);
+                    break;
+            }
+
+            switch (dt2.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    break;
+                case DayOfWeek.Tuesday:
+                    dt2 = dt1.AddDays(-1);
+                    break;
+                case DayOfWeek.Wednesday:
+                    dt2 = dt1.AddDays(-2);
+                    break;
+                case DayOfWeek.Thursday:
+                    dt2 = dt1.AddDays(-3);
+                    break;
+                case DayOfWeek.Friday:
+                    dt2 = dt1.AddDays(-4);
+                    break;
+                case DayOfWeek.Saturday:
+                    dt2 = dt1.AddDays(-5);
+                    break;
+                case DayOfWeek.Sunday:
+                    dt2 = dt1.AddDays(-6);
+                    break;
+            }
+
+            if (dt1.Date == dt2.Date)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         public void updateCursor()
@@ -163,36 +322,39 @@ namespace colarsisUserControl
 
             Graphics g = panel1.CreateGraphics();
 
-            switch (now.DayOfWeek)
+            if (compareWeek(DateTime.Now, calendarStart))
             {
-                case DayOfWeek.Monday:
-                    g.DrawLine(p, new Point(100 + sepThickness, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
-                case DayOfWeek.Tuesday:
-                    g.DrawLine(p, new Point(100 + sepThickness + dayWidth, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 2, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
-                case DayOfWeek.Wednesday:
-                    g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 2, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 3, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
-                case DayOfWeek.Thursday:
-                    g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 3, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 4, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
-                case DayOfWeek.Friday:
-                    g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 4, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 5, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
-                case DayOfWeek.Saturday:
-                    g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 5, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 6, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
-                case DayOfWeek.Sunday:
-                    g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 6, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 7, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
-                    g.Dispose();
-                    break;
+                switch (now.DayOfWeek)
+                {
+                    case DayOfWeek.Monday:
+                        g.DrawLine(p, new Point(100 + sepThickness, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                    case DayOfWeek.Tuesday:
+                        g.DrawLine(p, new Point(100 + sepThickness + dayWidth, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 2, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                    case DayOfWeek.Wednesday:
+                        g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 2, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 3, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                    case DayOfWeek.Thursday:
+                        g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 3, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 4, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                    case DayOfWeek.Friday:
+                        g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 4, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 5, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                    case DayOfWeek.Saturday:
+                        g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 5, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 6, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                    case DayOfWeek.Sunday:
+                        g.DrawLine(p, new Point(100 + sepThickness + dayWidth * 6, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60), new Point(100 + dayWidth * 7, 70 + now.Hour * hoursHeight + now.Minute * hoursHeight / 60));
+                        g.Dispose();
+                        break;
+                }
             }
         }
 
@@ -211,40 +373,52 @@ namespace colarsisUserControl
                 g.DrawLine(linesPen, l.BeginPoint, l.EndPoint);
             }
 
-            g.DrawString("Lundi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 - (int.Parse(headerTextFont.Size.ToString()) * "Lundi".Length / 2), 25));
-            g.DrawString("Mardi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth - (int.Parse(headerTextFont.Size.ToString()) * "Mardi".Length / 2), 25));
-            g.DrawString("Mercredi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 2 - (int.Parse(headerTextFont.Size.ToString()) * "Mercredi".Length / 2), 25));
-            g.DrawString("Jeudi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 3 - (int.Parse(headerTextFont.Size.ToString()) * "Jeudi".Length / 2), 25));
-            g.DrawString("Vendredi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 4 - (int.Parse(headerTextFont.Size.ToString()) * "Vendredi".Length / 2), 25));
-            g.DrawString("Samedi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 5 - (int.Parse(headerTextFont.Size.ToString()) * "Samedi".Length / 2), 25));
-            g.DrawString("Dimanche", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 6 - (int.Parse(headerTextFont.Size.ToString()) * "Dimanche".Length / 2), 25));
+            g.DrawString("Lundi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 - ((int)(headerTextFont.Size) * "Lundi".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Monday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Monday).Length / 2), 48));
 
-            g.DrawString("00:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("01:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("02:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 2 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("03:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 3 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("04:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 4 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("05:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 5 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("06:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 6 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("07:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 7 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("08:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 8 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("09:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 9 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("10:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 10 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("11:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 11 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("12:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 12 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("13:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 13 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("14:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 14 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("15:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 15 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("16:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 16 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("17:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 17 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("18:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 18 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("19:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 19 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("20:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 20 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("21:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 21 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("22:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 22 - int.Parse(headerTextFont.Size.ToString()) / 2));
-            g.DrawString("23:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 23 - int.Parse(headerTextFont.Size.ToString()) / 2));
+            g.DrawString("Mardi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth - ((int)(headerTextFont.Size) * "Mardi".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Tuesday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Tuesday).Length / 2), 48));
 
-            DateTime now = DateTime.Now;
+            g.DrawString("Mercredi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 2 - ((int)(headerTextFont.Size) * "Mercredi".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Wednesday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 2 - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Wednesday).Length / 2), 48));
+
+            g.DrawString("Jeudi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 3 - ((int)(headerTextFont.Size) * "Jeudi".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Thursday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 3 - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Thursday).Length / 2), 48));
+
+            g.DrawString("Vendredi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 4 - ((int)(headerTextFont.Size) * "Vendredi".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Friday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 4 - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Friday).Length / 2), 48));
+
+            g.DrawString("Samedi", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 5 - ((int)(headerTextFont.Size) * "Samedi".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Saturday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 5 - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Saturday).Length / 2), 48));
+
+            g.DrawString("Dimanche", headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 6 - ((int)(headerTextFont.Size) * "Dimanche".Length / 2), 25));
+            g.DrawString(getDayDate(calendarStart, DayOfWeek.Sunday), headerTextFont, headerTextBrush, new Point(100 + dayWidth / 2 + dayWidth * 6 - ((int)(headerTextFont.Size) * getDayDate(calendarStart, DayOfWeek.Sunday).Length / 2), 48));
+
+
+            g.DrawString("00:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("01:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight - (int)(headerTextFont.Size) / 2));
+            g.DrawString("02:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 2 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("03:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 3 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("04:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 4 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("05:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 5 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("06:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 6 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("07:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 7 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("08:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 8 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("09:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 9 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("10:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 10 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("11:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 11 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("12:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 12 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("13:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 13 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("14:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 14 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("15:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 15 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("16:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 16 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("17:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 17 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("18:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 18 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("19:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 19 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("20:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 20 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("21:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 21 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("22:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 22 - (int)(headerTextFont.Size) / 2));
+            g.DrawString("23:00", headerTextFont, headerTextBrush, new Point(23, 70 + hoursHeight / 2 + hoursHeight * 23 - (int)(headerTextFont.Size) / 2));
 
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
 
@@ -252,9 +426,9 @@ namespace colarsisUserControl
 
             foreach (Event e in events)
             {
-                if (now.Year == e.Beginning.Year)
+                if (calendarStart.Year == e.Beginning.Year)
                 {
-                    if (cal.GetWeekOfYear(now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) == cal.GetWeekOfYear(e.Beginning, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
+                    if (cal.GetWeekOfYear(calendarStart, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) == cal.GetWeekOfYear(e.Beginning, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
                     {
 
                         Rectangle r;
@@ -587,13 +761,7 @@ namespace colarsisUserControl
 
         private void panel1_Resize(object sender, EventArgs e)
         {
-            verticalLines.Clear();
-            horizontalLines.Clear();
-
-            initDays(panel1.Width - 100);
-            initHours(panel1.Height - 70);
-
-            panel1.Invalidate();
+            refresh();
         }
 
         private void panel1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -604,7 +772,7 @@ namespace colarsisUserControl
 
             foreach (Event ev in events)
             {
-                if (cal.GetWeekOfYear(ev.Beginning, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) == cal.GetWeekOfYear(DateTime.Now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
+                if (cal.GetWeekOfYear(ev.Beginning, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) == cal.GetWeekOfYear(calendarStart, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
                 {
                     if (ev.BeginPoint.X <= e.X && ev.BeginPoint.Y <= e.Y && ev.EndPoint.X >= e.X && ev.EndPoint.Y >= e.Y)
                     {
@@ -616,13 +784,7 @@ namespace colarsisUserControl
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            verticalLines.Clear();
-            horizontalLines.Clear();
-
-            initDays(panel1.Width - 100);
-            initHours(panel1.Height - 70);
-
-            panel1.Invalidate();
+            refresh();
         }
 
         //************************************************//

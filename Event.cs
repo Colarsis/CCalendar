@@ -6,7 +6,7 @@ using System.Text;
 
 namespace colarsisUserControl
 {
-    internal class Event
+    public class Event
     {
 
         //***********************************************//
