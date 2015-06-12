@@ -72,11 +72,11 @@ namespace colarsisUserControl
             set { eventTextFont = value; }
         }
 
-        //public Color HeaderTextColor
-        //{
-        //    get { return headerTextColor; }
-        //    set { headerTextColor = value; headerTextBrush.Color = headerTextColor; }
-        //}
+        public Color HeaderTextColor
+        {
+            get { return headerTextColor; }
+            set { headerTextColor = value; headerTextBrush.Color = headerTextColor; }
+        }
 
         public Color EventTextColor
         {
@@ -102,11 +102,11 @@ namespace colarsisUserControl
             set { mainBackgroundColor = value; panel1.BackColor = mainBackgroundColor; }
         }
 
-        public Color HeaderBackgroundColor
-        {
-            get { return headerBackgroundColor; }
-            set { headerBackgroundColor = value; }
-        }
+        //public Color HeaderBackgroundColor
+        //{
+         //   get { return headerBackgroundColor; }
+         //   set { headerBackgroundColor = value; }
+        //}
 
         public int SeparatorThickness
         {
@@ -159,11 +159,6 @@ namespace colarsisUserControl
                     break;
             }
 
-            events.Add(new Event(0, "Ceci est unt test de longue chaine de charactère", "test2", DateTime.Now, DateTime.Now + new TimeSpan(5, 20, 0), Color.Red));
-            events.Add(new Event(1, "Ceci est unt test de longue chaine de charactère", "test2", DateTime.Now + new TimeSpan(1, 0, 0, 0), DateTime.Now + new TimeSpan(1, 5, 20, 0), Color.Red));
-            events.Add(new Event(2, "Ceci est unt test de longue chaine de charactère", "test2", DateTime.Now + new TimeSpan(2, 0, 0, 0), DateTime.Now + new TimeSpan(2, 5, 20, 0), Color.Red));
-            events.Add(new Event(3, "Ceci est unt test de longue chaine de charactère", "test2", DateTime.Now + new TimeSpan(3, 0, 0, 0), DateTime.Now + new TimeSpan(3, 5, 20, 0), Color.Red));
-
             InitializeComponent();
             initializeLayout();
             updateGraphics();
@@ -213,6 +208,11 @@ namespace colarsisUserControl
         public void removeEvent(Event e)
         {
             events.Remove(e);
+        }
+
+        public void clearEvents()
+        {
+            events.Clear();
         }
 
         public void initializeLayout()
