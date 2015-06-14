@@ -21,6 +21,12 @@ namespace CCalendar
             init();
         }
 
+        public Color SelectedColor
+        {
+            get { return Color.FromName(dataGridView1.SelectedRows[0].Cells[1].Value.ToString()); }
+            private set{}
+        }
+
         private void init()
         {
 
@@ -39,12 +45,15 @@ namespace CCalendar
 
             foreach (Color c in color)
             {
-                string[] row = { "", c.Name };
+                if (c.Name != "Transparent")
+                {
+                    string[] row = { "", c.Name };
 
-                dataGridView1.Rows.Add(row);
+                    dataGridView1.Rows.Add(row);
 
-                dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Style.BackColor = Color.FromName(c.Name);
-                dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Style.SelectionBackColor = Color.FromName(c.Name);
+                    dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Style.BackColor = Color.FromName(c.Name);
+                    dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0].Style.SelectionBackColor = Color.FromName(c.Name);
+                }
             }
         }
 
