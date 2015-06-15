@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace CCalendar
+namespace ColarsisUserControls
 {
     class ColorComparer : IComparer<Color>
     {

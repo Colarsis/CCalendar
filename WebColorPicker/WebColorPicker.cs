@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Drawing.Design;
 
-namespace CCalendar
+namespace ColarsisUserControls
 {
     public partial class WebColorPicker : UserControl
     {

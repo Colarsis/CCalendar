@@ -1,4 +1,4 @@
-﻿namespace CCalendar
+﻿namespace ColarsisUserControls
 {
     partial class WebColorPicker
     {

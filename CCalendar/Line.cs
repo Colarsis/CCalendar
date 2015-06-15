@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace colarsisUserControl
+namespace ColarsisUserControls
 {
     internal class Line
     {

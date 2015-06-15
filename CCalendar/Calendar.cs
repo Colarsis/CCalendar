@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
 
-namespace colarsisUserControl
+namespace ColarsisUserControls
 {
     public class Calendar : UserControl
     {
