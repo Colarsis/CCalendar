@@ -15,6 +15,7 @@ namespace ColarsisUserControls
         //***********************************************//
         //******************** VARS ********************//
 
+        
         private Panel panel1;
         private int dayWidth;
         private int hoursHeight;
@@ -38,6 +39,7 @@ namespace ColarsisUserControls
         private Color timeBarColor = Color.Blue;
         private int sepThickness = 1;
         private DateTime calendarStart;
+        private int focusedEventID = -1;
 
         //PROPERTIES//
 
@@ -64,6 +66,12 @@ namespace ColarsisUserControls
         {
             get { return headerTextFont; }
             set { headerTextFont = value; }
+        }
+
+        public int FocusedEvent
+        {
+            get { return focusedEventID; }
+            set { focusedEventID = value; updateGraphics(); }
         }
 
         public Font EventTextFont
@@ -314,6 +322,13 @@ namespace ColarsisUserControls
 
         }
 
+        public void setFocusedEvent(int id)
+        {
+            focusedEventID = id;
+
+            updateGraphics();
+        }
+
         public void updateCursor()
         {
             DateTime now = DateTime.Now;
@@ -431,6 +446,8 @@ namespace ColarsisUserControls
                     if (cal.GetWeekOfYear(calendarStart, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) == cal.GetWeekOfYear(e.Beginning, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
                     {
 
+                        Pen focusPen = new Pen(ControlPaint.Dark(e.Color), 3);
+
                         Rectangle r;
 
                         switch (e.Beginning.DayOfWeek)
@@ -440,6 +457,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+                                
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }      
+
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();
@@ -470,6 +493,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth, 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 2 - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }
+                                
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();
@@ -500,6 +529,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 2 , 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 3 - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }
+                                
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();
@@ -530,6 +565,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 3, 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 4 - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }
+                                
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();
@@ -560,6 +601,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 4, 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 5 - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }
+                                
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();
@@ -590,6 +637,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 5, 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 6 - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }
+                                
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();
@@ -620,6 +673,12 @@ namespace ColarsisUserControls
                                 g.FillRectangle(new SolidBrush(e.Color), r);
                                 e.BeginPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 6, 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60);
                                 e.EndPoint = new Point(102 + int.Parse(linesPen.Width.ToString()) + dayWidth * 7 - 4 - int.Parse(linesPen.Width.ToString()), 70 + e.Beginning.Hour * hoursHeight + e.Beginning.Minute * hoursHeight / 60 + e.During.Hours * hoursHeight + e.During.Minutes * hoursHeight / 60);
+
+                                if (e.ID == focusedEventID)
+                                {
+                                    g.DrawRectangle(focusPen, e.BeginPoint.X + focusPen.Width - 2, e.BeginPoint.Y + focusPen.Width - 2, e.EndPoint.X - e.BeginPoint.X - focusPen.Width, e.EndPoint.Y - e.BeginPoint.Y - focusPen.Width);
+                                }
+                                
                                 if (r.Height >= (int)eventTextFont.Size + 10)
                                 {
                                     char[] cs = e.Title.ToCharArray();

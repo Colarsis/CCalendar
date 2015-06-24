@@ -91,23 +91,23 @@ namespace ColarsisUserControls
         //*********************************************************//
 
 
-        public Event(string title, string desc, DateTime begin, DateTime end, Color color)
-        {
-            if (end.CompareTo(begin) < 1)
-            {
-                throw new TimeIntervalException("The beginning DateTime couldn't be after the ending DateTime");
-            }
-            else
-            {
-                this.title = title;
-                this.description = desc;
-                this.begining = begin;
-                this.ending = end;
-                this.color = color;
-
-                updateEvent();
-            }
-        }
+        //public Event(string title, string desc, DateTime begin, DateTime end, Color color)
+        //{
+        //    if (end.CompareTo(begin) < 1)
+        //    {
+        //        throw new TimeIntervalException("The beginning DateTime couldn't be after the ending DateTime");
+        //    }
+        //    else
+        //    {
+        //        this.title = title;
+        //        this.description = desc;
+        //        this.begining = begin;
+        //        this.ending = end;
+        //        this.color = color;
+        //
+        //        updateEvent();
+        //    }
+        //}
 
         public Event(int id, string title, string desc, DateTime begin, DateTime end, Color color)
         {
